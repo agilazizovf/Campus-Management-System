@@ -6,31 +6,29 @@ on:
       - main
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Check repo files
-        run: ls -la cms  # cms qovluğunda nə var görmək üçün
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '21'
 
-      - name: Build backend jar
+      - name: Verify Java and Maven versions
         run: |
-          cd cms
-          mvn clean package -DskipTests
+          java -version
+          mvn --version
 
-      - name: Build Docker image
-        run: |
-          docker build -t agilazizovf/cms:latest cms
+      - name: Build with Maven (skip tests)
+        run: mvn clean package -DskipTests
 
-      - name: Push Docker image
-        run: |
-          echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-          docker push agilazizovf/cms:latest
+      - name: Copy Docker Compose to server
+        run: scp -i ${{ secrets.SERVER_KEY }} docker-compose.yml root@194.163.173.179:/root/
 
-      - name: Deploy to server
-        run: |
-          scp -i ${{ secrets.SERVER_KEY }} docker-compose.yml root@YOUR_SERVER_IP:/root/
-          ssh -i ${{ secrets.SERVER_KEY }} root@YOUR_SERVER_IP 'docker compose -f /root/docker-compose.yml up -d'
+      - name: Restart Docker Compose on server
+        run: ssh -i ${{ secrets.SERVER_KEY }} root@194.163.173.179 "docker compose -f /root/docker-compose.yml up -d"
