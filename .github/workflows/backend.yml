@@ -21,7 +21,9 @@ jobs:
           cache: 'maven'
 
       - name: Build JAR with Maven
-        run: mvn clean package -DskipTests
+        run: |
+         cd backend
+         mvn clean package -DskipTests
 
       - name: Build Docker image
         run: docker build -t agilazizovf/cms:latest .
