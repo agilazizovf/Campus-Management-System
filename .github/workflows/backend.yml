@@ -25,7 +25,9 @@ jobs:
           mvn --version
 
       - name: Build with Maven (skip tests)
-        run: mvn clean package -DskipTests
+        run: |
+         cd cms
+         mvn clean package -DskipTests
 
       - name: Copy Docker Compose to server
         run: scp -i ${{ secrets.SERVER_KEY }} docker-compose.yml root@194.163.173.179:/root/
