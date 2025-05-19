@@ -1,1 +1,41 @@
+name: Deploy Spring Boot App to Contabo
 
+on:
+  push:
+    branches:
+      - main  # or the branch you want to trigger on
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up JDK 21
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: '21'
+
+    - name: Build project with Maven
+      run: mvn -f cms/pom.xml clean package -DskipTests
+
+    - name: Prepare SSH key
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -H 194.163.173.179 >> ~/.ssh/known_hosts
+
+    - name: Copy JAR file to Contabo server
+      run: |
+        scp -i ~/.ssh/id_rsa cms/target/cms-0.0.1-SNAPSHOT.jar root@194.163.173.179:/root/cms-0.0.1-SNAPSHOT.jar
+
+    - name: Restart Spring Boot app on Contabo
+      run: |
+        ssh -i ~/.ssh/id_rsa root@194.163.173.179 << 'EOF'
+        sudo systemctl restart cms
+        sudo systemctl status cms --no-pager
+        EOF
