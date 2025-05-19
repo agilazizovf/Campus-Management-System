@@ -22,8 +22,12 @@ public class StudentEntity {
     private String surname;
 
     private String phone;
+
+    @Column(name = "student_code")
     private String studentCode; // Unique student number
-    private Integer year; // e.g. 1st year, 2nd year
+
+    @Column(name = "academic_year")
+    private Integer academicYear; // e.g. 1st year, 2nd year
     private String major;
 
     @ManyToOne

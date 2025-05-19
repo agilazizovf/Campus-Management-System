@@ -47,7 +47,7 @@ public class StudentService {
         student.setPhone(request.getPhone());
         student.setStudentCode(request.getStudentCode());
         student.setMajor(request.getMajor());
-        student.setYear(request.getYear());
+        student.setAcademicYear(request.getYear());
         student.setFaculty(faculty);
         student.setUser(user);
 

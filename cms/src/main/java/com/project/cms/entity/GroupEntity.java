@@ -26,4 +26,9 @@ public class GroupEntity {
 
     @ManyToMany(mappedBy = "groups")
     private List<StudentEntity> students;
+
+    @ManyToOne
+    @JoinColumn(name = "professor_id")
+    private ProfessorEntity professor;
+
 }

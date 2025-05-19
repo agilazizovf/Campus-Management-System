@@ -15,7 +15,7 @@ public class StudentMapper {
         response.setSurname(student.getSurname());
         response.setPhone(student.getPhone());
         response.setStudentCode(student.getStudentCode());
-        response.setYear(student.getYear());
+        response.setYear(student.getAcademicYear());
         response.setMajor(student.getMajor());
 
         if (student.getFaculty() != null) {

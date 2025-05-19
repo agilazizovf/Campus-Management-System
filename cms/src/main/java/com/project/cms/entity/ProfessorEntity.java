@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Entity
 @Table(name = "professors")
 @Data
@@ -33,4 +35,8 @@ public class ProfessorEntity {
     @OneToOne
     @JoinColumn(name = "user_id")
     private UserEntity user;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "professor")
+    private List<GroupEntity> groups;
 }

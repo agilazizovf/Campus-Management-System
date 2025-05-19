@@ -1,16 +1,19 @@
 package com.project.cms.service;
 
 import com.project.cms.dto.request.GroupRequest;
+import com.project.cms.dto.request.ProfessorGroupRequest;
 import com.project.cms.dto.request.StudentGroupRequest;
 import com.project.cms.dto.request.UpdateGroupRequest;
 import com.project.cms.dto.response.GroupResponse;
 import com.project.cms.entity.FacultyEntity;
 import com.project.cms.entity.GroupEntity;
+import com.project.cms.entity.ProfessorEntity;
 import com.project.cms.entity.StudentEntity;
 import com.project.cms.exception.CustomException;
 import com.project.cms.mapper.GroupMapper;
 import com.project.cms.repository.FacultyRepository;
 import com.project.cms.repository.GroupRepository;
+import com.project.cms.repository.ProfessorRepository;
 import com.project.cms.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,6 +25,7 @@ import java.util.List;
 public class GroupService {
 
     private final StudentRepository studentRepository;
+    private final ProfessorRepository professorRepository;
     private final GroupRepository groupRepository;
     private final FacultyRepository facultyRepository;
 
@@ -46,7 +50,7 @@ public class GroupService {
         FacultyEntity faculty = facultyRepository.findById(facultyId)
                 .orElseThrow(() -> new CustomException("Fakültə tapılmadı", "Faculty not found", "Not found", 404, null));
 
-        List<GroupEntity> groups = groupRepository.findAllByFacultyId(facultyId);
+        List<GroupEntity> groups = groupRepository.findAllByFacultyId(faculty.getId());
         return GroupMapper.convertToDTOList(groups);
     }
 
@@ -89,4 +93,14 @@ public class GroupService {
         studentRepository.save(student);
     }
 
+    public void assignProfessorToGroup(ProfessorGroupRequest request) {
+        GroupEntity group = groupRepository.findById(request.getGroupId())
+                .orElseThrow(() -> new CustomException("Qrup tapılmadı", "Group not found", "Not found", 404, null));
+
+        ProfessorEntity professor = professorRepository.findById(request.getProfessorId())
+                .orElseThrow(() -> new CustomException("Müəllim tapılmadı", "Professor not found", "Not found", 404, null));
+
+        group.setProfessor(professor);
+        groupRepository.save(group);
+    }
 }
