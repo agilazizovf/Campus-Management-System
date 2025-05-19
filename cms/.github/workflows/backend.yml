@@ -1,0 +1,27 @@
+name: Deploy Backend
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Kodu yüklə
+        uses: actions/checkout@v3
+
+      - name: SSH açarını yaz
+        run: |
+          echo "${{ secrets.SERVER_KEY }}" > key.pem
+          chmod 600 key.pem
+
+      - name: Docker image build
+        run: |
+          docker build -t agilazizovf/cms:latest .
+
+      - name: Serverə yolla və işə sal
+        run: |
+          scp -i key.pem backend/docker-compose.yml root@194.163.173.179:/root/cms/
+          ssh -i key.pem root@194.163.173.179 'docker compose -f /home/user/docker-compose.yml up -d'
