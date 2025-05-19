@@ -1,4 +1,4 @@
-name: Deploy Backend
+name: Build and Deploy Backend
 
 on:
   push:
@@ -13,23 +13,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up JDK
+      - name: Set up Java
         uses: actions/setup-java@v3
         with:
-          java-version: '21'
           distribution: 'temurin'
+          java-version: '21'
 
-      - name: Build the JAR
-        run: |
-          cd backend
-          ./mvnw clean package -DskipTests
+      - name: Build JAR with Maven
+        run: ./mvnw clean package -DskipTests
 
-      - name: Copy JAR to Server via SCP
-        run: |
-          echo "${{ secrets.SERVER_KEY }}" > key.pem
-          chmod 600 key.pem
-          scp -i key.pem -o StrictHostKeyChecking=no backend/target/*.jar root@194.163.173.179:/root/cms-0.0.1-SNAPSHOT.jar
+      - name: Build Docker image
+        run: docker build -t agilazizovf/cms:latest .
 
-      - name: Restart service on server
+      - name: Copy docker-compose.yml to server
         run: |
-          ssh -i key.pem -o StrictHostKeyChecking=no root@194.163.173.179 "systemctl restart cms"
+          scp -i ${{ secrets.SERVER_KEY }} docker-compose.yml ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:/home/${{ secrets.SERVER_USER }}/
+
+      - name: Deploy on server
+        run: |
+          ssh -i ${{ secrets.SERVER_KEY }} ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} 'docker compose -f /home/${{ secrets.SERVER_USER }}/docker-compose.yml up -d'
