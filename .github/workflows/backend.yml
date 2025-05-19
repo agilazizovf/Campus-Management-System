@@ -32,7 +32,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           source: cms/target/cms-0.0.1-SNAPSHOT.jar
-          target: /root/cms-0.0.1-SNAPSHOT.jar
+          target: /root
 
       - name: Restart Spring Boot app
         uses: appleboy/ssh-action@v0.1.6
