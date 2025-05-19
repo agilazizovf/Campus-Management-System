@@ -1,4 +1,4 @@
-name: Build and Deploy Backend
+name: Campus Management System
 
 on:
   push:
