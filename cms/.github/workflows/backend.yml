@@ -8,20 +8,28 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Kodu yüklə
+      - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: SSH açarını yaz
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Build the JAR
+        run: |
+          cd backend
+          ./mvnw clean package -DskipTests
+
+      - name: Copy JAR to Server via SCP
         run: |
           echo "${{ secrets.SERVER_KEY }}" > key.pem
           chmod 600 key.pem
+          scp -i key.pem -o StrictHostKeyChecking=no backend/target/*.jar root@194.163.173.179:/root/cms-0.0.1-SNAPSHOT.jar
 
-      - name: Docker image build
+      - name: Restart service on server
         run: |
-          docker build -t agilazizovf/cms:latest .
-
-      - name: Serverə yolla və işə sal
-        run: |
-          scp -i key.pem backend/docker-compose.yml root@194.163.173.179:/root/cms/
-          ssh -i key.pem root@194.163.173.179 'docker compose -f /home/user/docker-compose.yml up -d'
+          ssh -i key.pem -o StrictHostKeyChecking=no root@194.163.173.179 "systemctl restart cms"
