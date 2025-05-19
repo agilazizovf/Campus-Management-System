@@ -6,32 +6,31 @@ on:
       - main
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Java and Maven
-        uses: actions/setup-java@v3
-        with:
-          distribution: temurin
-          java-version: '21'
-          cache: 'maven'
+      - name: Check repo files
+        run: ls -la cms  # cms qovluğunda nə var görmək üçün
 
-      - name: Build JAR with Maven
+      - name: Build backend jar
         run: |
-         cd backend
-         mvn clean package -DskipTests
+          cd cms
+          mvn clean package -DskipTests
 
       - name: Build Docker image
-        run: docker build -t agilazizovf/cms:latest .
-
-      - name: Copy docker-compose.yml to server
         run: |
-          scp -i ${{ secrets.SERVER_KEY }} docker-compose.yml ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:/home/${{ secrets.SERVER_USER }}/
+          docker build -t agilazizovf/cms:latest cms
 
-      - name: Deploy on server
+      - name: Push Docker image
         run: |
-          ssh -i ${{ secrets.SERVER_KEY }} ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} 'docker compose -f /home/${{ secrets.SERVER_USER }}/docker-compose.yml up -d'
+          echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+          docker push agilazizovf/cms:latest
+
+      - name: Deploy to server
+        run: |
+          scp -i ${{ secrets.SERVER_KEY }} docker-compose.yml root@YOUR_SERVER_IP:/root/
+          ssh -i ${{ secrets.SERVER_KEY }} root@YOUR_SERVER_IP 'docker compose -f /root/docker-compose.yml up -d'
