@@ -3,7 +3,7 @@ name: Deploy to Contabo
 on:
   push:
     branches:
-      - main   # or your deployment branch
+      - main   # Sənin deployment branch-in
 
 jobs:
   deploy:
@@ -16,8 +16,8 @@ jobs:
       - name: Set up Java 21
         uses: actions/setup-java@v3
         with:
-          java-version: '21'       # JDK version
-          distribution: 'temurin'  # JDK distribution
+          java-version: '21'
+          distribution: 'temurin'
 
       - name: Build with Maven
         run: |
@@ -31,7 +31,7 @@ jobs:
           username: root
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
-          source: cms/target/cms-0.0.1-SNAPSHOT.jar   # Full relative path from repo root
+          source: cms/target/cms-0.0.1-SNAPSHOT.jar
           target: /root/cms-0.0.1-SNAPSHOT.jar
 
       - name: Restart Spring Boot app
