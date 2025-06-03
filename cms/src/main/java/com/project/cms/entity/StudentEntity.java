@@ -1,5 +1,6 @@
 package com.project.cms.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -29,6 +30,10 @@ public class StudentEntity {
     @Column(name = "academic_year")
     private Integer academicYear; // e.g. 1st year, 2nd year
     private String major;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<GradeEntity> grades;
 
     @ManyToOne
     @JoinColumn(name = "faculty_id")

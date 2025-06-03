@@ -32,6 +32,12 @@ VALUES
     ('ROLE_UPDATE_PROFESSOR', 0, 1, 0, 0),
     ('ROLE_FIND_PROFESSORS_BY_FACULTY', 0, 1, 0, 0),
 
+    ('ROLE_ADD_SUBJECT', 0, 1, 0, 0),
+    ('ROLE_FIND_SUBJECT', 0, 1, 0, 0),
+    ('ROLE_GET_ALL_SUBJECTS', 0, 1, 1, 1),
+    ('ROLE_UPDATE_SUBJECT', 0, 1, 0, 0),
+    ('ROLE_DELETE_SUBJECT', 0, 1, 0, 0),
+
 ('ROLE_ADD_STUDENT', 0, 1, 0, 0),
 ('ROLE_FIND_STUDENT', 0, 1, 0, 0),
 ('ROLE_GET_ALL_STUDENTS', 0, 1, 0, 0),
@@ -112,5 +118,11 @@ INSERT INTO groups (name, faculty_id, professor_id) VALUES
 INSERT INTO student_groups (student_id, group_id) VALUES
                                                       (1, 1),
                                                       (2, 3);
+
+INSERT INTO subjects (name, professor_id, group_id, faculty_id) VALUES
+                                                                    ('Object Oriented Programming', 1, 1, 1),
+                                                                    ('Data Structures', 1, 2, 1),
+                                                                    ('General Physics', 2, 3, 2);
+
 
 

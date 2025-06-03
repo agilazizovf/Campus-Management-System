@@ -42,5 +42,8 @@ public class FacultyEntity {
     private List<GroupEntity> groups;
 
     @OneToMany(mappedBy = "faculty", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<AdminEntity> admins = new ArrayList<>();
+    private List<SubjectEntity> subjects;
+
+    @OneToMany(mappedBy = "faculty", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<AdminEntity> admins;
 }
