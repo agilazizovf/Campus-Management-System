@@ -5,6 +5,7 @@ import com.project.cms.dto.request.UpdateSubjectRequest;
 import com.project.cms.dto.response.SubjectResponse;
 import com.project.cms.exception.CustomException;
 import com.project.cms.service.SubjectService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@SecurityRequirement(name = "bearerAuth")
 @RestController
 @RequestMapping("/api/subjects")
 @RequiredArgsConstructor
